@@ -17,19 +17,34 @@ function M.generate_header()
   local style = get_comment_style(filetype)
   local year = os.date("%Y")
 
+  -- Ask for project name
+  vim.ui.input({ prompt = "Enter project name: " }, function(project_name)
+    -- If user cancels, use current file name as project name
+    if not project_name or project_name == "" then
+      project_name = vim.fn.expand("%:t")
+    end
+
+    -- Create header
     local header = string.format(
-        "%s\n%s EPITECH PROJECT, %s\n%s [project name]\n%s File description:\n%s [enter description here]\n%s",
-        style.start,
-        style.mid,
-        year,
-        style.mid,
-        style.mid,
-        style.mid,
-        style.end_
+      "%s\n%s EPITECH PROJECT, %s\n%s %s\n%s File description:\n%s [enter description here]\n%s",
+      style.start,
+      style.mid,
+      year,
+      style.mid,
+      project_name,
+      style.mid,
+      style.mid,
+      style.end_
     )
 
-  vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(header, "\n"))
-  print("Header inserted successfully!")
+    -- Insert the header at the beginning of the file
+    vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(header, "\n"))
+
+    -- Clean UI and print notification
+    vim.cmd("redraw")
+    vim.notify("Header inserted successfully!", vim.log.levels.INFO)
+  end)
 end
 
 return M
+
