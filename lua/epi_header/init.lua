@@ -15,16 +15,18 @@ end
 function M.generate_header()
   local filetype = vim.bo.filetype
   local style = get_comment_style(filetype)
+  local year = os.date("%Y")
 
-  local header = string.format(
-    "%s\n%s EPITECH PROJECT, 2024\n%s [project name]\n%s File description:\n%s [enter description here]\n%s",
+    local header = string.format(
+        "%s\n%s EPITECH PROJECT, %s\n%s [project name]\n%s File description:\n%s [enter description here]\n%s",
         style.start,
         style.mid,
+        year,
         style.mid,
         style.mid,
         style.mid,
         style.end_
-  )
+    )
 
   vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(header, "\n"))
   print("Header inserted successfully!")
