@@ -1,26 +1,9 @@
 local M = {}
-
-local comment_styles = {
-  c = { start = "/*", mid = "**", end_ = "*/" },
-  cpp = { start = "/*", mid = "**", end_ = "*/" },
-  python = { start = "#", mid = "#", end_ = "#" },
-  lua = { start = "--", mid = "--", end_ = "--" },
-  default = { start = "#", mid = "#", end_ = "#" }
-}
+local comment_styles = require("epitech-header.comment_styles")
+local utils = require("epitech-header.utils")
 
 local function get_comment_style(filetype)
-  return comment_styles[filetype] or comment_styles.default
-end
-
-local function remove_existing_header(style)
-  -- Get the first 6 lines of the file
-  local lines = vim.api.nvim_buf_get_lines(0, 0, 6, false)
-
-  -- Check if the second line contains "EPITECH PROJECT"
-  if #lines >= 2 and lines[2]:find("EPITECH PROJECT", 1, true) then
-    vim.api.nvim_buf_set_lines(0, 0, 6, false, {}) -- Delete first 6 lines
-    vim.notify("Existing header removed.", vim.log.levels.INFO)
-  end
+  return comment_styles.styles[filetype] or comment_styles.styles.default
 end
 
 function M.generate_header()
@@ -29,7 +12,7 @@ function M.generate_header()
   local year = os.date("%Y")
 
   -- Check if header already header_exists
-  remove_existing_header(style)
+  utils.remove_existing_header(style)
 
   -- Request project name
   vim.ui.input({ prompt = "Enter project name: " }, function(project_name)
