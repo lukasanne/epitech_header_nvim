@@ -3,7 +3,9 @@ local comment_styles = require("epitech-header.comment_styles")
 local utils = require("epitech-header.utils")
 
 local function get_comment_style(filetype)
-  return comment_styles.styles[filetype] or comment_styles.styles.default
+  -- Return the style based on filetype, defaulting to 'default' if not found
+  local style = comment_styles.styles[filetype] or comment_styles.styles.default
+  return style
 end
 
 function M.generate_header()
