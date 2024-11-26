@@ -8,6 +8,22 @@ local function get_comment_style(filetype)
   return style
 end
 
+local function create_header(style, year, project_name, file_description)
+  return string.format(
+    "%s\n%s EPITECH PROJECT, %s\n%s %s\n%s File description:\n%s %s\n%s",
+    style.start,
+    style.mid,
+    year,
+    style.mid,
+    project_name,
+    style.mid,
+    style.mid,
+    file_description,
+    style.end_
+  )
+end
+
+
 function M.generate_header()
   local filetype = vim.bo.filetype
   local style = get_comment_style(filetype)
@@ -16,7 +32,7 @@ function M.generate_header()
   -- Check and remove existing header
   utils.remove_existing_header(style)
 
-  -- Request project name with default value as the current file name
+  -- Request project name and file description
   vim.ui.input({
     prompt = "Enter project name: ",
     default = vim.fn.expand("%:t")
@@ -26,24 +42,11 @@ function M.generate_header()
       project_name = vim.fn.expand("%:t")
     end
 
-    -- Request file description with a default empty string
     vim.ui.input({
       prompt = "Enter file description: ",
       default = ""
     }, function(file_description)
-      -- Create the header
-      local header = string.format(
-        "%s\n%s EPITECH PROJECT, %s\n%s %s\n%s File description:\n%s %s\n%s",
-        style.start,
-        style.mid,
-        year,
-        style.mid,
-        project_name,
-        style.mid,
-        style.mid,
-        file_description,
-        style.end_
-      )
+      local header = create_header(style, year, project_name, file_description)
 
       -- Insert the header at the beginning of the file
       vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(header, "\n"))
