@@ -13,24 +13,25 @@ function M.generate_header()
   local style = get_comment_style(filetype)
   local year = os.date("%Y")
 
-  -- Check if header already header_exists
+  -- Check and remove existing header
   utils.remove_existing_header(style)
 
-  -- Request project name
-  vim.ui.input({ prompt = "Enter project name: " }, function(project_name)
-    -- If user cancels, use current file name as project name
+  -- Request project name with default value as the current file name
+  vim.ui.input({
+    prompt = "Enter project name: ",
+    default = vim.fn.expand("%:t")
+  }, function(project_name)
     if not project_name or project_name == "" then
+      vim.notify("No project name provided. Using current file name.", vim.log.levels.WARN)
       project_name = vim.fn.expand("%:t")
     end
 
-    -- Request file description
-    vim.ui.input({ prompt = "Enter file description: " }, function (file_description)
-      -- If user cancels, use empty string as file description
-      if not file_description then
-        file_description = ""
-      end
-
-      -- Create header
+    -- Request file description with a default empty string
+    vim.ui.input({
+      prompt = "Enter file description: ",
+      default = ""
+    }, function(file_description)
+      -- Create the header
       local header = string.format(
         "%s\n%s EPITECH PROJECT, %s\n%s %s\n%s File description:\n%s %s\n%s",
         style.start,
@@ -46,9 +47,7 @@ function M.generate_header()
 
       -- Insert the header at the beginning of the file
       vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(header, "\n"))
-
-      -- Clean UI and print notification
-      vim.cmd("redraw")
+      vim.cmd("redraw")  -- Clean UI
       vim.notify("Header inserted successfully!", vim.log.levels.INFO)
     end)
   end)
